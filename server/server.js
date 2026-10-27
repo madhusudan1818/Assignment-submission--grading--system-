@@ -10,14 +10,21 @@ const submissionRoutes = require("./routes/submissions");
 const app = express();
 
 // CLIENT_URL can be a comma-separated list of allowed origins.
-const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
+const allowedOrigins = (process.env.CLIENT_URL || "")
   .split(",")
-  .map((s) => s.trim().replace(/\/$/, ""));
+  .map((s) => s.trim().replace(/\/$/, ""))
+  .filter(Boolean);
 
 app.use(
   cors({
     origin(origin, cb) {
-      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+      console.log("CORS origin received:", origin);
+      console.log("Allowed origins:", allowedOrigins);
+
+      if (!origin || allowedOrigins.includes(origin)) {
+        return cb(null, true);
+      }
+
       return cb(new Error("Not allowed by CORS"));
     },
   })
